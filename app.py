@@ -19,7 +19,6 @@ def calculate_rsi(series: pd.Series, period: int = 14) -> pd.Series:
     rsi = 100 - (100 / (1 + rs))
     
     return rsi
-
 def stock(ticker):
     df_single = yf.download(
         tickers=ticker,
@@ -38,15 +37,15 @@ def stock(ticker):
     
     return df_single
 
-df_nvda = stock("NVDA")
-print(df_nvda[['Close', 'RSI']].tail())
+df = stock("RGC")
+print(df[['Close', 'RSI']].tail())
 
 #draw RSI
 plt.figure(figsize=(12,6))
-sns.lineplot(data=df_nvda, x=df_nvda.index, y='RSI')
+sns.lineplot(data=df, x=df.index, y='RSI')
 plt.axhline(70, color='red', linestyle='--')
 plt.axhline(30, color='green', linestyle='--')
-plt.title('RSI for NVDA')
+plt.title('RSI')
 plt.ylabel('RSI')
 plt.xlabel('Date')
 plt.tight_layout()
