@@ -26,7 +26,6 @@ def stock(ticker):
         start=start_date,
         end=end_date,
         interval="1d",
-        group_by="ticker",
         auto_adjust=True,
         progress=False
     )
