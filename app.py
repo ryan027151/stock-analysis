@@ -19,8 +19,9 @@ def calculate_rsi(series: pd.Series, period: int = 14) -> pd.Series:
     rsi = 100 - (100 / (1 + rs))
     
     return rsi
+
 def stock(ticker):
-    df_single = yf.download(
+    df = yf.download(
         tickers=ticker,
         start=start_date,
         end=end_date,
@@ -29,16 +30,25 @@ def stock(ticker):
         progress=False
     )
     
-    if df_single.empty:
+    if df.empty:
         raise ValueError("No data returned from yfinance.")
+    #MACD
+    df["EMA_12"] = df["Close"].ewm(span=12, adjust=False).mean()
+    df["EMA_26"] = df["Close"].ewm(span=26, adjust=False).mean()
+    df["MACD"] =  df["EMA_12"] - df["EMA_26"]
+    # MACD signal line (9-day EMA of MACD)
+    df["Signal"] = df["MACD"].ewm(span=9, adjust=False).mean()
+    # MACD Histogram
+    df["Histogram"] = df["MACD"] - df["Signal"]
 
-    # Calculate RSI based on adjusted Close (auto_adjust=True means 'Close' is adjusted)
-    df_single['RSI'] = calculate_rsi(df_single['Close'], period=14)
+    #RSI
+    df['RSI'] = calculate_rsi(df['Close'], period=14)
+   
     
-    return df_single
+    return df
 
 df = stock("RGC")
-print(df[['Close', 'RSI']].tail())
+print(df[['Close', 'RSI', 'MACD']].tail())
 
 #draw RSI
 plt.figure(figsize=(12,6))
@@ -48,5 +58,17 @@ plt.axhline(30, color='green', linestyle='--')
 plt.title('RSI')
 plt.ylabel('RSI')
 plt.xlabel('Date')
+plt.tight_layout()
+plt.show()
+
+# Draw MACD
+plt.figure(figsize=(12,6))
+sns.lineplot(data=df, x=df.index, y='MACD', label='MACD', color='blue')
+sns.lineplot(data=df, x=df.index, y='Signal', label='Signal Line', color='orange')
+plt.bar(df.index, df['Histogram'], label='Histogram', color='gray', alpha=0.5, width=1.0)
+plt.title('MACD Indicator')
+plt.xlabel('Date')
+plt.ylabel('MACD Value')
+plt.legend()
 plt.tight_layout()
 plt.show()
