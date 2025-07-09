@@ -32,6 +32,10 @@ def stock(ticker):
     
     if df.empty:
         raise ValueError("No data returned from yfinance.")
+    
+    # Calculate SMAs
+    df["SMA_20"] = df["Close"].rolling(window=20).mean()
+    df["SMA_50"] = df["Close"].rolling(window=50).mean()
     #MACD
     df["EMA_12"] = df["Close"].ewm(span=12, adjust=False).mean()
     df["EMA_26"] = df["Close"].ewm(span=26, adjust=False).mean()
@@ -48,7 +52,7 @@ def stock(ticker):
     return df
 
 df = stock("RGC")
-print(df[['Close', 'RSI', 'MACD']].tail())
+print(df[['Close', 'RSI', 'MACD','EMA_12','EMA_26','SMA_20','SMA_50']].tail())
 
 #draw RSI
 plt.figure(figsize=(12,6))
