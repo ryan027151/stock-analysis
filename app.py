@@ -30,7 +30,7 @@ def stock(ticker):
         auto_adjust=True,
         progress=False
     )
-    
+   
     if df.empty:
         raise ValueError("No data returned from yfinance.")
     
@@ -53,6 +53,7 @@ def stock(ticker):
 
 df = stock("RGC")
 print(df[['Close', 'RSI', 'MACD','EMA_12','EMA_26','SMA_20','SMA_50']].tail())
+print(df.dtypes)
 
 #draw RSI
 plt.figure(figsize=(12,6))
@@ -92,7 +93,7 @@ mpf.plot( #graph candle stick
     type      = "candle",
     style     = "yahoo",      # or "charles", "nightclouds", etc.
     addplot   = apds,
-    volume    = True,         # bottom sub‑panel
+    volume    = True,         # bot tom sub‑panel
     figsize   = (14, 8),
     title     =  "Graph",
     mav       = (),           # turn off mpf’s own mav so we rely on ours
