@@ -35,7 +35,7 @@ def stock(ticker):
         raise ValueError("No data returned from yfinance.")
     
     # Calculate SMAs
-    df["SMA_200"] = df["Close"].rolling(window=20).mean()
+    df["SMA_20"] = df["Close"].rolling(window=20).mean()
     df["SMA_50"] = df["Close"].rolling(window=50).mean()
     #MACD
     df["EMA_12"] = df["Close"].ewm(span=12, adjust=False).mean()
@@ -53,7 +53,7 @@ def stock(ticker):
     return df
 
 df = stock("RGC")
-print(df[['Close', 'RSI', 'MACD','EMA_12','EMA_26','SMA_200','SMA_50']].tail())
+print(df[['Close', 'RSI', 'MACD','EMA_12','EMA_26','SMA_20','SMA_50']].tail())
 
 #draw RSI
 plt.figure(figsize=(12,6))
@@ -79,16 +79,13 @@ plt.tight_layout()
 plt.show()
 
 #Draw EMA and SMA
-mpf.make_addplot(df["SMA_50"], color="blue", width=1.5, label="50MA")
-mpf.make_addplot(df["SMA_200"], color="red", width=1.5, label="200MA")
-"""
 plt.figure(figsize=(14,7))
-sns.lineplot(data=df, x=df.index, y='Close', label='Close Price', color='black')
+
 sns.lineplot(data=df, x=df.index, y='EMA_12', label='EMA 12', color='blue')
 sns.lineplot(data=df, x=df.index, y='EMA_26', label='EMA 26', color='green')
-sns.lineplot(data=df, x=df.index, y='SMA_20', label='SMA 200', color='orange')
+sns.lineplot(data=df, x=df.index, y='SMA_20', label='SMA 20', color='orange')
 sns.lineplot(data=df, x=df.index, y='SMA_50', label='SMA 50', color='red')
-"""
+
 plt.title(' Moving Averages (EMA and SMA)')
 plt.xlabel('Date')
 plt.ylabel('Price')
