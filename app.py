@@ -76,3 +76,19 @@ plt.ylabel('MACD Value')
 plt.legend()
 plt.tight_layout()
 plt.show()
+
+#Draw EMA and SMA
+plt.figure(figsize=(14,7))
+sns.lineplot(data=df, x=df.index, y='Close', label='Close Price', color='black')
+sns.lineplot(data=df, x=df.index, y='EMA_12', label='EMA 12', color='blue')
+sns.lineplot(data=df, x=df.index, y='EMA_26', label='EMA 26', color='green')
+sns.lineplot(data=df, x=df.index, y='SMA_20', label='SMA 20', color='orange')
+sns.lineplot(data=df, x=df.index, y='SMA_50', label='SMA 50', color='red')
+
+plt.title('NVDA Moving Averages (EMA and SMA)')
+plt.xlabel('Date')
+plt.ylabel('Price')
+plt.legend()
+plt.tight_layout()
+plt.show()
+
