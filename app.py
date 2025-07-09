@@ -88,7 +88,7 @@ apds = [ #mpf can be used to make candle stick
     mpf.make_addplot(df["SMA_50"], color="red",   width=1.2),
 ]
 
-mpf.plot( #graph candle stick
+mpf.plot( #graph candle stick; need to fix due to vauleerror of Open NOT being an int or float?
     df,
     type      = "candle",
     style     = "yahoo",      # or "charles", "nightclouds", etc.
