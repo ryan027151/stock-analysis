@@ -48,7 +48,6 @@ def stock(ticker):
 
     #RSI
     df['RSI'] = calculate_rsi(df['Close'], period=14)
-   
     
     return df
 
@@ -80,6 +79,25 @@ plt.show()
 
 #Draw EMA and SMA
 plt.figure(figsize=(14,7))
+
+apds = [ #mpf can be used to make candle stick
+    mpf.make_addplot(df["EMA_12"], color="blue",  width=1.0),
+    mpf.make_addplot(df["EMA_26"], color="green", width=1.0),
+    mpf.make_addplot(df["SMA_20"], color="orange", width=1.2),
+    mpf.make_addplot(df["SMA_50"], color="red",   width=1.2),
+]
+
+mpf.plot( #graph candle stick
+    df,
+    type      = "candle",
+    style     = "yahoo",      # or "charles", "nightclouds", etc.
+    addplot   = apds,
+    volume    = True,         # bottom sub‑panel
+    figsize   = (14, 8),
+    title     =  "Graph",
+    mav       = (),           # turn off mpf’s own mav so we rely on ours
+    tight_layout=True
+)
 
 sns.lineplot(data=df, x=df.index, y='EMA_12', label='EMA 12', color='blue')
 sns.lineplot(data=df, x=df.index, y='EMA_26', label='EMA 26', color='green')
