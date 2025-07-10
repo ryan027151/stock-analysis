@@ -47,6 +47,14 @@ def stock(ticker):
     # MACD Histogram
     df["Histogram"] = df["MACD"] - df["Signal"]
 
+    #OBV
+    df['Price_Direction'] = 0
+    df.loc[df['Close'] > df['Close'].shift(1), 'Price_Direction'] = 1
+    df.loc[df['Close'] < df['Close'].shift(1), 'Price_Direction'] = -1
+    df['OBV_Change'] = df['Price_Direction'] * df['Volume']
+    df['OBV_Change'] = df['OBV_Change'].fillna(0)
+    df['OBV'] = df['OBV_Change'].cumsum()
+
     #RSI
     df['RSI'] = calculate_rsi(df['Close'], period=14)
     
@@ -120,4 +128,16 @@ plt.ylabel('Price')
 plt.legend()
 plt.tight_layout()
 plt.show()
+
+#OBV
+plt.figure(figsize=(12, 6))
+plt.plot(df.index, df['OBV'], label='On-Balance Volume', color='purple')
+plt.title('On-Balance Volume (OBV)')
+plt.xlabel('Date')
+plt.ylabel('OBV')
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
+plt.show()
+
 
