@@ -129,6 +129,8 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
+#Fib Retracement
+
 #OBV
 plt.figure(figsize=(12, 6))
 plt.plot(df.index, df['OBV'], label='On-Balance Volume', color='purple')
