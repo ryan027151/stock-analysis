@@ -33,7 +33,8 @@ def stock(ticker):
    
     if df.empty:
         raise ValueError("No data returned from yfinance.")
-    
+    df.columns = df.columns.get_level_values(0)
+
     # Calculate SMAs
     df["SMA_20"] = df["Close"].rolling(window=20).mean()
     df["SMA_50"] = df["Close"].rolling(window=50).mean()
@@ -53,7 +54,6 @@ def stock(ticker):
 
 df = stock("RGC")
 print(df[['Close', 'RSI', 'MACD','EMA_12','EMA_26','SMA_20','SMA_50']].tail())
-print(df.dtypes)
 
 #draw RSI
 plt.figure(figsize=(12,6))
@@ -79,8 +79,6 @@ plt.tight_layout()
 plt.show()
 
 #Draw EMA and SMA
-plt.figure(figsize=(14,7))
-
 apds = [ #mpf can be used to make candle stick
     mpf.make_addplot(df["EMA_12"], color="blue",  width=1.0),
     mpf.make_addplot(df["EMA_26"], color="green", width=1.0),
@@ -88,8 +86,19 @@ apds = [ #mpf can be used to make candle stick
     mpf.make_addplot(df["SMA_50"], color="red",   width=1.2),
 ]
 
+ohlcv = df[['Open', 'High', 'Low', 'Close', 'Volume']].copy()
+
+ohlcv = ohlcv.dropna()  # drop rows with any NaN (important if recent dates are still forming)
+
+ohlcv = ohlcv.astype({
+    'Open': float,
+    'High': float,
+    'Low': float,
+    'Close': float,
+    'Volume': float
+})
 mpf.plot( #graph candle stick; need to fix due to vauleerror of Open NOT being an int or float?
-    df,
+    ohlcv,
     type      = "candle",
     style     = "yahoo",      # or "charles", "nightclouds", etc.
     addplot   = apds,
