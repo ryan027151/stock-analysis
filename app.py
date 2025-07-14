@@ -86,14 +86,47 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
+#Fib Retracement
+#Time range
+subset = df.loc["2025-07-01":"2025-07-13"]
+#calculation
+maxprice = subset['Close'].max()
+minprice = subset['Close'].min()
+fib_0 = maxprice
+fib_382 = maxprice - 0.382*(maxprice-minprice)
+fib_500 = maxprice - 0.5*(maxprice-minprice)
+fib_618 = maxprice - 0.618*(maxprice-minprice)
+fib_1 = minprice
+print(f"Fib retrace 0.000 is {fib_0}.")
+print(f"Fib retrace 0.382 is {fib_382}.")
+print(f"Fib retrace 0.500 is {fib_500}.")
+print(f"Fib retrace 0.618 is {fib_618}.")
+print(f"Fib retrace 1.000 is {fib_1}.")
+
+fib_0_line = pd.Series(fib_0, index=df.index)
+fib_382_line = pd.Series(fib_382, index=df.index)
+fib_500_line = pd.Series(fib_500, index=df.index)
+fib_618_line = pd.Series(fib_618, index=df.index)
+fib_1_line = pd.Series(fib_1, index=df.index)
+
+fib_0_hl = mpf.make_addplot(fib_0_line, color='black', linestyle='--', linewidth=1.2)
+fib_382_hl = mpf.make_addplot(fib_382_line, color='purple', linestyle='--', linewidth=1.2)
+fib_500_hl = mpf.make_addplot(fib_500_line, color='red', linestyle='--', linewidth=1.2)
+fib_618_hl = mpf.make_addplot(fib_618_line, color='orange', linestyle='--', linewidth=1.2)
+fib_1_hl = mpf.make_addplot(fib_1_line, color='green', linestyle='--', linewidth=1.2)
+
 #Draw EMA and SMA
 apds = [ #mpf can be used to make candle stick
     mpf.make_addplot(df["EMA_12"], color="blue",  width=1.0),
     mpf.make_addplot(df["EMA_26"], color="green", width=1.0),
     mpf.make_addplot(df["SMA_20"], color="orange", width=1.2),
     mpf.make_addplot(df["SMA_50"], color="red",   width=1.2),
+    fib_0_hl,
+    fib_382_hl,
+    fib_500_hl,
+    fib_618_hl,
+    fib_1_hl
 ]
-
 #draw candle stick stock graph
 ohlcv = df[['Open', 'High', 'Low', 'Close', 'Volume']].copy()
 
@@ -118,7 +151,7 @@ mpf.plot( #graph candle stick; need to fix due to vauleerror of Open NOT being a
     tight_layout=True
 )
 
-sns.lineplot(data=df, x=df.index, y='EMA_12', label='EMA 12', color='blue')
+"""sns.lineplot(data=df, x=df.index, y='EMA_12', label='EMA 12', color='blue')
 sns.lineplot(data=df, x=df.index, y='EMA_26', label='EMA 26', color='green')
 sns.lineplot(data=df, x=df.index, y='SMA_20', label='SMA 20', color='orange')
 sns.lineplot(data=df, x=df.index, y='SMA_50', label='SMA 50', color='red')
@@ -128,23 +161,7 @@ plt.xlabel('Date')
 plt.ylabel('Price')
 plt.legend()
 plt.tight_layout()
-plt.show()
-
-#Fib Retracement
-#Time range
-
-#calculation
-maxprice = 
-minprice = 
-fib_0 = maxprice
-fib_382 = maxprice - 0.382(maxprice-minprice)
-fib_500 = maxprice - 0.5(maxprice-minprice)
-fib_618 = maxprice - 0.618(maxprice-minprice)
-fib_1 = minprice
-print(f"Fib retrace 0.000 is {fib_0}.")
-print(f"Fib retrace 0.382 is {fib_382}.")
-print(f"Fib retrace 0.500 is {fib_500}.")
-print(f"Fib retrace 0.618 is {fib_618}.")
+plt.show()"""
 
 #OBV
 plt.figure(figsize=(12, 6))
