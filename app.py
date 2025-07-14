@@ -109,11 +109,11 @@ fib_500_line = pd.Series(fib_500, index=df.index)
 fib_618_line = pd.Series(fib_618, index=df.index)
 fib_1_line = pd.Series(fib_1, index=df.index)
 
-fib_0_hl = mpf.make_addplot(fib_0_line, color='black', linestyle='--', linewidth=1.2)
-fib_382_hl = mpf.make_addplot(fib_382_line, color='purple', linestyle='--', linewidth=1.2)
-fib_500_hl = mpf.make_addplot(fib_500_line, color='red', linestyle='--', linewidth=1.2)
-fib_618_hl = mpf.make_addplot(fib_618_line, color='orange', linestyle='--', linewidth=1.2)
-fib_1_hl = mpf.make_addplot(fib_1_line, color='green', linestyle='--', linewidth=1.2)
+fib_0_hl = mpf.make_addplot(fib_0_line, color='black', linestyle='--', width=1.2)
+fib_382_hl = mpf.make_addplot(fib_382_line, color='purple', linestyle='--', width=1.2)
+fib_500_hl = mpf.make_addplot(fib_500_line, color='red', linestyle='--', width=1.2)
+fib_618_hl = mpf.make_addplot(fib_618_line, color='orange', linestyle='--', width=1.2)
+fib_1_hl = mpf.make_addplot(fib_1_line, color='green', linestyle='--', width=1.2)
 
 #Draw EMA and SMA
 apds = [ #mpf can be used to make candle stick
