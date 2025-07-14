@@ -5,8 +5,8 @@ import yfinance as yf
 import pandas as pd
 import mplfinance as mpf
 
-end_date = datetime(year=2025, month=7, day=7)
-start_date = datetime(year=2025, month=1, day=1)
+end_date = datetime(year=2025, month=7, day=13)
+start_date = datetime(year=2024, month=12, day=1)
 
 def calculate_rsi(series: pd.Series, period: int = 14) -> pd.Series:
     delta = series.diff()
@@ -94,6 +94,7 @@ apds = [ #mpf can be used to make candle stick
     mpf.make_addplot(df["SMA_50"], color="red",   width=1.2),
 ]
 
+#draw candle stick stock graph
 ohlcv = df[['Open', 'High', 'Low', 'Close', 'Volume']].copy()
 
 ohlcv = ohlcv.dropna()  # drop rows with any NaN (important if recent dates are still forming)
@@ -130,6 +131,20 @@ plt.tight_layout()
 plt.show()
 
 #Fib Retracement
+#Time range
+
+#calculation
+maxprice = 
+minprice = 
+fib_0 = maxprice
+fib_382 = maxprice - 0.382(maxprice-minprice)
+fib_500 = maxprice - 0.5(maxprice-minprice)
+fib_618 = maxprice - 0.618(maxprice-minprice)
+fib_1 = minprice
+print(f"Fib retrace 0.000 is {fib_0}.")
+print(f"Fib retrace 0.382 is {fib_382}.")
+print(f"Fib retrace 0.500 is {fib_500}.")
+print(f"Fib retrace 0.618 is {fib_618}.")
 
 #OBV
 plt.figure(figsize=(12, 6))
