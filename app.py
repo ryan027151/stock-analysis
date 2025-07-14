@@ -144,24 +144,12 @@ mpf.plot( #graph candle stick; need to fix due to vauleerror of Open NOT being a
     type      = "candle",
     style     = "yahoo",      # or "charles", "nightclouds", etc.
     addplot   = apds,
-    volume    = True,         # bot tom sub‑panel
+    volume    = True,         # bottom sub‑panel
     figsize   = (14, 8),
-    title     =  "Graph",
+    title     =  "Candlestick",
     mav       = (),           # turn off mpf’s own mav so we rely on ours
     tight_layout=True
 )
-
-"""sns.lineplot(data=df, x=df.index, y='EMA_12', label='EMA 12', color='blue')
-sns.lineplot(data=df, x=df.index, y='EMA_26', label='EMA 26', color='green')
-sns.lineplot(data=df, x=df.index, y='SMA_20', label='SMA 20', color='orange')
-sns.lineplot(data=df, x=df.index, y='SMA_50', label='SMA 50', color='red')
-
-plt.title(' Moving Averages (EMA and SMA)')
-plt.xlabel('Date')
-plt.ylabel('Price')
-plt.legend()
-plt.tight_layout()
-plt.show()"""
 
 #OBV
 plt.figure(figsize=(12, 6))
