@@ -82,12 +82,11 @@ def build_ai_prompt(ticker: str, df: pd.DataFrame, question: str) -> str:
     )
     return prompt
 
-# === Query the LLM ===
+# AI querry
 def ask_llm(prompt: str) -> str:
     resp = llm(prompt, max_tokens=512, temperature=0.7, top_p=0.95)
     return resp["choices"][0]["text"].strip()
 
-# === Main program ===
 def main():
     print("=== Stock Analysis + AI Assistant ===")
     ticker = input("Enter a stock ticker (e.g. AAPL): ").upper()
