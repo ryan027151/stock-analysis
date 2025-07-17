@@ -57,7 +57,7 @@ def stock(ticker: str) -> pd.DataFrame:
 
     return df
 
-# === Build prompt summary for LLM ===
+# prompt summary for LLM 
 def build_ai_prompt(ticker: str, df: pd.DataFrame, question: str) -> str:
     latest = df.iloc[-1]
     summary = (
