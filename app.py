@@ -4,12 +4,17 @@ import seaborn as sns
 import yfinance as yf
 import pandas as pd
 import mplfinance as mpf
+from llama_cpp import Llama
 
-# Time window
-start_date = datetime(2024, 12, 1)
-end_date = datetime(2025, 7, 13)
+# set up model
+MODEL_PATH = "./models/Llama-3.2-1B-Instruct-Q8_0.gguf"
+llm = Llama(model_path=MODEL_PATH, n_ctx=2048, n_threads=4, verbose=False)
 
-# RSI calculation
+#  time range
+start_date = datetime(2025, 1, 1)
+end_date = datetime.today()
+
+# RSI
 def calculate_rsi(series: pd.Series, period: int = 14) -> pd.Series:
     delta = series.diff()
     gain = delta.clip(lower=0)
@@ -17,11 +22,10 @@ def calculate_rsi(series: pd.Series, period: int = 14) -> pd.Series:
     avg_gain = gain.rolling(window=period).mean()
     avg_loss = loss.rolling(window=period).mean()
     rs = avg_gain / avg_loss
-    rsi = 100 - (100 / (1 + rs))
-    return rsi
+    return 100 - (100 / (1 + rs))
 
-# Download and process stock data
-def stock(ticker):
+# === Download and process stock data ===
+def stock(ticker: str) -> pd.DataFrame:
     df = yf.download(
         tickers=ticker,
         start=start_date,
@@ -30,11 +34,8 @@ def stock(ticker):
         auto_adjust=True,
         progress=False
     )
-
     if df.empty:
-        raise ValueError("No data returned from yfinance.")
-
-    # Flatten MultiIndex if needed
+        raise ValueError(f"No data returned for {ticker}.")
     if isinstance(df.columns, pd.MultiIndex):
         df.columns = df.columns.get_level_values(0)
 
@@ -56,126 +57,110 @@ def stock(ticker):
 
     return df
 
-df = stock("RGC")
-print(df[['Close', 'RSI', 'MACD', 'EMA_12', 'EMA_26', 'SMA_20', 'SMA_50']].tail())
+# === Build prompt summary for LLM ===
+def build_ai_prompt(ticker: str, df: pd.DataFrame, question: str) -> str:
+    latest = df.iloc[-1]
+    summary = (
+        f"Ticker: {ticker}\n"
+        f"Date: {latest.name.date()}\n"
+        f"Close: {latest['Close']:.2f}\n"
+        f"RSI: {latest['RSI']:.1f}\n"
+        f"MACD: {latest['MACD']:.2f}\n"
+        f"Signal: {latest['Signal']:.2f}\n"
+        f"Histogram: {latest['Histogram']:.2f}\n"
+        f"SMA(20): {latest['SMA_20']:.2f}\n"
+        f"SMA(50): {latest['SMA_50']:.2f}\n"
+        f"EMA(12): {latest['EMA_12']:.2f}\n"
+        f"EMA(26): {latest['EMA_26']:.2f}\n"
+        f"OBV: {int(latest['OBV'])}\n\n"
+    )
+    prompt = (
+        "You are a financial stock assistant AI. You are given the latest technical indicators below:\n\n"
+        f"{summary}"
+        f"User question: {question}\n"
+        "Provide a concise, data-driven analysis and recommendation.\n"
+    )
+    return prompt
 
-# === RSI ===
-plt.figure(figsize=(12, 6))
-sns.lineplot(data=df, x=df.index, y='RSI')
-plt.axhline(70, color='red', linestyle='--')
-plt.axhline(30, color='green', linestyle='--')
-plt.title('RSI')
-plt.ylabel('RSI')
-plt.xlabel('Date')
-plt.tight_layout()
-plt.show()
+# === Query the LLM ===
+def ask_llm(prompt: str) -> str:
+    resp = llm(prompt, max_tokens=256, stop=["\n"])
+    return resp["choices"][0]["text"].strip()
 
-# === MACD ===
-plt.figure(figsize=(12, 6))
-sns.lineplot(data=df, x=df.index, y='MACD', label='MACD', color='blue')
-sns.lineplot(data=df, x=df.index, y='Signal', label='Signal Line', color='orange')
-plt.bar(df.index, df['Histogram'], label='Histogram', color='gray', alpha=0.5, width=1.0)
-plt.title('MACD Indicator')
-plt.xlabel('Date')
-plt.ylabel('MACD Value')
-plt.legend()
-plt.tight_layout()
-plt.show()
+# === Main program ===
+def main():
+    print("=== Stock Analysis + AI Assistant ===")
+    ticker = input("Enter a stock ticker (e.g. AAPL): ").upper()
+    df = stock(ticker)
 
-# === Fibonacci Retracement ===
-subset = df.loc["2025-07-01":"2025-07-13"].dropna()
-if subset.empty:
-    raise ValueError("No data available in selected range for Fibonacci calculation.")
+    # Print last rows of key indicators
+    print(df[['Close','RSI','MACD','Signal','SMA_20','SMA_50']].tail())
 
-maxprice = subset['Close'].max()
-minprice = subset['Close'].min()
-fib_levels = {
-    '0.000': maxprice,
-    '0.382': maxprice - 0.382*(maxprice-minprice),
-    '0.500': maxprice - 0.5*(maxprice-minprice),
-    '0.618': maxprice - 0.618*(maxprice-minprice),
-    '1.000': minprice
-}
+    # --- Plot RSI ---
+    plt.figure(figsize=(10,5))
+    sns.lineplot(x=df.index, y=df['RSI'])
+    plt.axhline(70, linestyle='--')
+    plt.axhline(30, linestyle='--')
+    plt.title(f"{ticker} RSI")
+    plt.tight_layout()
+    plt.show()
 
-for level, value in fib_levels.items():
-    print(f"Fib retrace {level} is {value:.2f}")
+    # --- Plot MACD ---
+    plt.figure(figsize=(10,5))
+    sns.lineplot(x=df.index, y=df['MACD'], label='MACD')
+    sns.lineplot(x=df.index, y=df['Signal'], label='Signal')
+    plt.bar(df.index, df['Histogram'], alpha=0.3)
+    plt.title(f"{ticker} MACD")
+    plt.tight_layout()
+    plt.show()
 
-# Horizontal Fib Lines
-fib_lines = [
-    mpf.make_addplot(pd.Series(value, index=df.index), color=color, linestyle='--', width=1.2)
-    for value, color in zip(fib_levels.values(), ['black', 'purple', 'red', 'orange', 'green'])
-]
+    # --- Fibonacci retracement on most recent 2 weeks ---
+    subset = df.last("14D").dropna()
+    maxp, minp = subset['Close'].max(), subset['Close'].min()
+    levels = [0, .382, .5, .618, 1]
+    fibs = {f"{l:.3f}": maxp - l*(maxp-minp) for l in levels}
+    print("Fibonacci levels:")
+    for lvl, val in fibs.items():
+        print(f" {lvl}: {val:.2f}")
 
-# === Candlestick + EMA/SMA + Fib ===
-apds = [
-    mpf.make_addplot(df["EMA_12"], color="blue", width=1.0),
-    mpf.make_addplot(df["EMA_26"], color="green", width=1.0),
-    mpf.make_addplot(df["SMA_20"], color="orange", width=1.2),
-    mpf.make_addplot(df["SMA_50"], color="red", width=1.2),
-] + fib_lines
+    # Plot candlesticks + overlays
+    fib_lines = [
+        mpf.make_addplot(pd.Series(val, index=df.index), linestyle='--')
+        for val in fibs.values()
+    ]
+    apds = [
+        mpf.make_addplot(df["EMA_12"]),
+        mpf.make_addplot(df["EMA_26"]),
+        mpf.make_addplot(df["SMA_20"]),
+        mpf.make_addplot(df["SMA_50"])
+    ] + fib_lines
 
-ohlcv = df[['Open', 'High', 'Low', 'Close', 'Volume']].dropna().astype(float)
+    mpf.plot(
+        df[['Open','High','Low','Close','Volume']],
+        type="candle", style="yahoo",
+        addplot=apds, volume=True, title=f"{ticker} Candlestick",
+        figsize=(12,6)
+    )
 
-mpf.plot(
-    ohlcv,
-    type="candle",
-    style="yahoo",
-    addplot=apds,
-    volume=True,
-    figsize=(14, 8),
-    title="Candlestick",
-    mav=(),
-    tight_layout=True
-)
+    # --- Plot OBV ---
+    plt.figure(figsize=(10,5))
+    plt.plot(df.index, df['OBV'])
+    plt.title(f"{ticker} On-Balance Volume")
+    plt.tight_layout()
+    plt.show()
 
-# === OBV ===
-plt.figure(figsize=(12, 6))
-plt.plot(df.index, df['OBV'], label='On-Balance Volume', color='purple')
-plt.title('On-Balance Volume (OBV)')
-plt.xlabel('Date')
-plt.ylabel('OBV')
-plt.grid(True)
-plt.legend()
-plt.tight_layout()
-plt.show()
+    # --- AI Interaction ---
+    while True:
+        question = input("\nWhat would you like to ask the AI about this stock? (or 'exit')\n> ")
+        if question.lower() in ("exit","quit"):
+            print("Goodbye.")
+            return
 
-def analysis(rsi_value, macd_value, signal_value, histogram_value):
-    buy_score = 0
+        prompt = build_ai_prompt(ticker, df, question)
+        print("\n--- AI PROMPT ---\n", prompt)
+        answer = ask_llm(prompt)
+        print("\n--- AI ANALYSIS ---\n", answer)
+        
 
-    # ----- RSI Analysis -----
-    if rsi_value < 30:
-        print("RSI: Oversold – the asset may be undervalued and could rebound.")
-        buy_score += 1
-    elif 30 <= rsi_value <= 55:
-        print("RSI: Strong buy signal – momentum may be shifting upward.")
-        buy_score += 1.5
-    elif 55 < rsi_value <= 70:
-        print("RSI: Neutral to slightly overbought – proceed with caution.")
-        buy_score -= 0.5
-    else:  # RSI > 70
-        print("RSI: Overbought – the asset may be overvalued.")
-        buy_score -= 1
-
-    # ----- MACD Analysis -----
-    if macd_value > signal_value and histogram_value > 0:
-        print("MACD: Bullish crossover – strong buy momentum.")
-        buy_score += 1.5
-    elif macd_value > signal_value and histogram_value < 0:
-        print("MACD: Weak bullish crossover – watch for confirmation.")
-        buy_score += 0.5
-    elif macd_value < signal_value and histogram_value < 0:
-        print("MACD: Bearish crossover – selling pressure increasing.")
-        buy_score -= 1
-    elif macd_value < signal_value and histogram_value > 0:
-        print("MACD: Weak bearish crossover – could reverse.")
-        buy_score -= 0.5
-    else:
-        print("MACD: Neutral – no strong trend signal.")
-    
-    return buy_score
-
-
-    
-
-    
-
+if __name__ == "__main__":
+    main()
