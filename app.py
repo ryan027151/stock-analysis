@@ -84,7 +84,7 @@ def build_ai_prompt(ticker: str, df: pd.DataFrame, question: str) -> str:
 
 # === Query the LLM ===
 def ask_llm(prompt: str) -> str:
-    resp = llm(prompt, max_tokens=256, stop=["\n"])
+    resp = llm(prompt, max_tokens=512, temperature=0.7, top_p=0.95)
     return resp["choices"][0]["text"].strip()
 
 # === Main program ===
@@ -114,9 +114,11 @@ def main():
     plt.tight_layout()
     plt.show()
 
-    # --- Fibonacci retracement on most recent 2 weeks ---
-    subset = df.last("14D").dropna()
-    maxp, minp = subset['Close'].max(), subset['Close'].min()
+    # --- Fibonacci retracement on most recent increasing time range ---
+    subset = df.loc["2025-07-01":"2025-07-16"].dropna() # select a time when the price is in bullish
+    if subset.empty:
+        raise ValueError("No data available in selected range for Fibonacci calculation.")
+    maxp, minp = subset['High'].max(), subset['Low'].min()
     levels = [0, .382, .5, .618, 1]
     fibs = {f"{l:.3f}": maxp - l*(maxp-minp) for l in levels}
     print("Fibonacci levels:")
@@ -149,7 +151,7 @@ def main():
     plt.tight_layout()
     plt.show()
 
-    # --- AI Interaction ---
+    # AI Interaction 
     while True:
         question = input("\nWhat would you like to ask the AI about this stock? (or 'exit')\n> ")
         if question.lower() in ("exit","quit"):
