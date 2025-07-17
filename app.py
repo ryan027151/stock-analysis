@@ -24,7 +24,7 @@ def calculate_rsi(series: pd.Series, period: int = 14) -> pd.Series:
     rs = avg_gain / avg_loss
     return 100 - (100 / (1 + rs))
 
-# === Download and process stock data ===
+# download stock data
 def stock(ticker: str) -> pd.DataFrame:
     df = yf.download(
         tickers=ticker,
