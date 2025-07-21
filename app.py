@@ -10,6 +10,16 @@ from llama_cpp import Llama
 MODEL_PATH = "./models/Llama-3.2-1B-Instruct-Q8_0.gguf"
 llm = Llama(model_path=MODEL_PATH, n_ctx=2048, n_threads=4, verbose=False)
 
+
+#set up memory file
+def load_memory(file_path="./memory.txt"):
+    try:
+        with open(file_path, "r") as f:
+            return f.read()
+    except FileNotFoundError:
+        return ""
+
+
 #  time range
 start_date = datetime(2025, 1, 1)
 end_date = datetime.today()
