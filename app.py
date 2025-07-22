@@ -6,9 +6,6 @@ import pandas as pd
 import mplfinance as mpf
 from llama_cpp import Llama
 import json
-import tkinter as tk
-from tkinter import scrolledtext
-
 
 # set up model
 MODEL_PATH = "./models/Llama-3.2-1B-Instruct-Q8_0.gguf"
