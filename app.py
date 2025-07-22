@@ -5,20 +5,17 @@ import yfinance as yf
 import pandas as pd
 import mplfinance as mpf
 from llama_cpp import Llama
+import json
+import tkinter as tk
+from tkinter import scrolledtext
+
 
 # set up model
 MODEL_PATH = "./models/Llama-3.2-1B-Instruct-Q8_0.gguf"
 llm = Llama(model_path=MODEL_PATH, n_ctx=2048, n_threads=4, verbose=False)
 
-
-#set up memory file
-def load_memory(file_path="./memory.txt"):
-    try:
-        with open(file_path, "r") as f:
-            return f.read()
-    except FileNotFoundError:
-        return ""
-
+with open("train.json", "r", encoding="utf-8") as f:
+    stock_knowledge = json.load(f)
 
 #  time range
 start_date = datetime(2025, 1, 1)
@@ -85,8 +82,8 @@ def build_ai_prompt(ticker: str, df: pd.DataFrame, question: str) -> str:
         f"OBV: {int(latest['OBV'])}\n\n"
     )
     prompt = (
-        "You are a financial stock assistant AI. You are given the latest technical indicators below:\n\n"
-        f"{summary}"
+        "You are a smart financial stock assistant AI. You are given the latest technical indicators below and some background knowledge to train on for stock analysis:\n\n"
+        f"{summary, stock_knowledge}"
         f"User question: {question}\n"
         "Provide a concise, data-driven analysis and recommendation.\n"
     )

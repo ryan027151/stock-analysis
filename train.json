@@ -1,0 +1,85 @@
+{
+  "stock_market_knowledge": {
+    "Market Basics & Types": [
+      "Stock exchanges (NYSE, NASDAQ, etc.)",
+      "Types of stocks: Common vs. Preferred",
+      "Market capitalization: small-cap, mid-cap, large-cap",
+      "Primary market vs secondary market",
+      "Bull market vs bear market",
+      "IPO (Initial Public Offering)",
+      "Market indices (S&P 500, Dow Jones, NASDAQ Composite)"
+    ],
+    "Stock Pricing & Trading": [
+      "Bid-ask spread and order book",
+      "Market orders, limit orders, stop orders",
+      "Liquidity and trading volume",
+      "Price discovery mechanisms",
+      "After-hours and pre-market trading",
+      "Short selling and margin trading"
+    ],
+    "Fundamental Analysis": [
+      "Financial statements: Income statement, balance sheet, cash flow",
+      "Key ratios: P/E ratio, P/B ratio, ROE, ROA, Debt/Equity, Current ratio",
+      "Earnings per share (EPS) and earnings growth",
+      "Dividend yield and payout ratio",
+      "Free cash flow and operating cash flow",
+      "Competitive advantages (moats) and business models"
+    ],
+    "Technical Analysis": [
+      "Chart types: Line, Bar, Candlestick",
+      "Trend analysis: Uptrend, downtrend, sideways",
+      "Support and resistance levels",
+      "Moving averages: SMA, EMA, WMA",
+      "Momentum indicators: RSI (Relative Strength Index), MACD (Moving Average Convergence Divergence), Stochastic Oscillator",
+      "Volume analysis and On-Balance Volume (OBV)",
+      "Chart patterns: Head and Shoulders, Double Top/Bottom, Triangles, Flags",
+      "Fibonacci retracement and extension levels",
+      "Bollinger Bands and volatility measures"
+    ],
+    "Quantitative & Algorithmic Concepts": [
+      "Backtesting strategies",
+      "Risk-adjusted returns: Sharpe ratio, Sortino ratio",
+      "Alpha and beta (measure of stock vs market volatility)",
+      "Factor investing: value, growth, momentum factors",
+      "Machine learning in trading: supervised learning, reinforcement learning",
+      "Time series forecasting: ARIMA, LSTM"
+    ],
+    "Macroeconomic & Sector Analysis": [
+      "Interest rates and monetary policy impact",
+      "Inflation and deflation effects",
+      "GDP growth and unemployment rates",
+      "Sector rotation and cyclical vs defensive stocks",
+      "Geopolitical risks and trade policies",
+      "Currency exchange rates and international exposure"
+    ],
+    "Derivatives & Alternative Instruments": [
+      "Options basics: Calls, puts, strike price, expiry",
+      "Futures contracts",
+      "ETFs and index funds",
+      "Mutual funds vs hedge funds",
+      "Short ETFs and inverse funds"
+    ],
+    "Behavioral Finance & Market Psychology": [
+      "Market sentiment indicators: VIX, put/call ratio",
+      "Herd behavior and panic selling",
+      "Overbought and oversold conditions",
+      "Confirmation bias and anchoring in trading decisions",
+      "Impact of news, rumors, and social media"
+    ],
+    "Risk Management & Portfolio Theory": [
+      "Diversification and asset allocation",
+      "Stop loss and take profit orders",
+      "Position sizing and leverage",
+      "Modern Portfolio Theory (MPT)",
+      "Efficient Frontier and Capital Asset Pricing Model (CAPM)",
+      "Risk tolerance and investment horizon"
+    ],
+    "Regulatory & Ethical Considerations": [
+      "Insider trading laws",
+      "SEC regulations and disclosures",
+      "Market manipulation tactics and detection",
+      "Ethical investing and ESG (Environmental, Social, Governance) factors",
+      "Taxes on capital gains and dividends"
+    ]
+  }
+}
