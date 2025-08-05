@@ -112,7 +112,7 @@ def build_ai_prompt(ticker: str, df: pd.DataFrame, question: str) -> str:
         f"OBV: {int(latest['OBV'])}\n\n"
     )
      #fetching news
-    api_key = "iriTwSg8wHDtXe0sb36fsoeQpIgY7utL"
+    api_key = "api"
     news = fetch_stock_news(f"{ticker}", api_key=api_key, days_back=30, limit=15)
 
     # Format into a prompt section
