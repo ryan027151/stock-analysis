@@ -137,4 +137,3 @@ If you’d like to integrate new indicators or improve the AI prompt logic, cont
 
 This repository delivers a comprehensive, interactive stock analysis tool that blends Python-based technical analysis with an LLaMA-powered intelligent assistant. Load the model, ask questions, visualize trends, and receive actionable insights—all offline and customizable.
 
-Let me know if you’d like help writing unit tests, packaging, or refining the AI’s style guide for financial advice.
