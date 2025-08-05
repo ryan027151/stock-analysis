@@ -115,6 +115,77 @@ The AI analyzes indicators and returns a clear recommendation.
 
 ---
 
+Here is an **add-on section for your GitHub README** documenting the new **news-fetching feature** using the Polygon API:
+
+---
+
+## 🗞️ Real-Time Stock News Integration
+
+This project now includes functionality to **fetch recent news headlines** related to a selected stock using the [Polygon.io News API](https://polygon.io/docs/rest/stocks/news).
+
+### 🔍 Purpose
+
+The latest news articles (from the past 30 days by default) are retrieved and summarized into plain text, which can then be **fed into a local AI model** (such as LLaMA) to enhance its market insight and decision-making accuracy.
+
+### 📦 Features
+
+* Fetches article titles, publication dates, sources, and links.
+* Filters news by stock ticker.
+* Adjustable date range (default: 30 days).
+* Designed to enrich the AI model’s pre-context before analysis.
+
+### 🧩 Example Usage
+
+```python
+from news import fetch_stock_news_polygon
+
+api_key = "YOUR_POLYGON_API_KEY"
+ticker = "AAPL"  # Change to your target stock
+
+news = fetch_stock_news_polygon(ticker, api_key)
+for item in news:
+    print(f"{item['date']} - {item['source']}: {item['title']}")
+```
+
+### 📄 Output Sample
+
+```
+2025-07-10 - CNBC: Apple’s iPhone 17 may ditch buttons, analysts predict
+2025-07-09 - Reuters: Apple faces EU scrutiny over iOS App Store rules
+2025-07-05 - Bloomberg: Apple Vision Pro pre-orders exceed expectations
+```
+
+### 🧠 Feeding to AI
+
+You can convert the news into a prompt-friendly format:
+
+```python
+prompt_section = "Recent news for analysis:\n" + "\n".join(
+    f"- {n['date']} ({n['source']}): {n['title']}" for n in news
+)
+# Inject `prompt_section` into your LLM context before starting analysis.
+```
+
+---
+
+### ⚙️ Requirements
+
+* Polygon.io API key (free or paid)
+* Internet connection
+* Python 3.10+ (uses `zoneinfo` for timezone handling)
+
+Install dependencies (if you haven't yet):
+
+```bash
+pip install requests
+pip install polygon
+```
+
+---
+
+Let me know if you'd like me to auto-generate the full `news.py` module or expand this section with visual examples.
+
+
 ## 📈 Extending the Tool
 
 You can easily expand with:
@@ -136,4 +207,5 @@ If you’d like to integrate new indicators or improve the AI prompt logic, cont
 ## ✅ Summary
 
 This repository delivers a comprehensive, interactive stock analysis tool that blends Python-based technical analysis with an LLaMA-powered intelligent assistant. Load the model, ask questions, visualize trends, and receive actionable insights—all offline and customizable.
+
 
