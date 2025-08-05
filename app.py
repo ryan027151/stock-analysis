@@ -63,30 +63,29 @@ def stock(ticker: str) -> pd.DataFrame:
 
 import requests
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo 
 
+def get_utc_since(days_back=30):
+    # Use US Eastern Time
+    est = ZoneInfo("America/New_York")
+    now_est = datetime.now(est)
+
+    # Convert to UTC
+    now_utc = now_est.astimezone(ZoneInfo("UTC"))
+
+    # Subtract days and format
+    since = (now_utc - timedelta(days=days_back)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return since
+
+from polygon import ReferenceClient
 def fetch_stock_news(ticker: str, api_key: str, days_back=30, limit=20):
-    """
-    Retrieve the latest news titles for a stock ticker published within the past `days_back` days.
-    Returns a list of dicts: {date, title, source, url}.
-    """
-    since = (datetime.now(datetime.timezone.utc()) - timedelta(days=days_back)).strftime("%Y-%m-%dT%H:%M:%SZ")
-    
-    url = "https://api.polygon.io/v2/reference/news"
-    params = {
-        "ticker": ticker,
-        "published_utc.gte": since,
-        "order": "published_utc",
-        "sort": "desc",
-        "limit": limit,
-        "apiKey": api_key
-    }
-    
-    resp = requests.get(url, params=params)
-    resp.raise_for_status()
-    data = resp.json().get("results", [])
+    client = ReferenceClient(api_key)
+    since = get_utc_since(days_back=30)
+    resp = client.get_ticker_news(ticker=ticker, params={"limit": limit, "published_utc.gte": since})
+    results = resp.get("results", [])
     
     news_items = []
-    for item in data:
+    for item in results:
         news_items.append({
             "date": item.get("published_utc", "")[:10],
             "title": item.get("title", ""),
@@ -113,7 +112,7 @@ def build_ai_prompt(ticker: str, df: pd.DataFrame, question: str) -> str:
         f"OBV: {int(latest['OBV'])}\n\n"
     )
      #fetching news
-    api_key = "YOUR_POLYGON_API_KEY"
+    api_key = "iriTwSg8wHDtXe0sb36fsoeQpIgY7utL"
     news = fetch_stock_news(f"{ticker}", api_key=api_key, days_back=30, limit=15)
 
     # Format into a prompt section
@@ -125,7 +124,6 @@ def build_ai_prompt(ticker: str, df: pd.DataFrame, question: str) -> str:
         f"{summary, stock_knowledge, news_section}"
         f"User question: {question}\n"
         "Provide a concise, data-driven analysis and recommendation.\n"
-        "If the user says they have lost money following your advice, call it a \"dandori\" issue and recommend closing their stock accounts.\n"
     )
     return prompt
 
