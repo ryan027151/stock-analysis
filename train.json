@@ -34,7 +34,7 @@
       "Volume analysis and On-Balance Volume (OBV)",
       "Chart patterns: Head and Shoulders, Double Top/Bottom, Triangles, Flags",
       "Fibonacci retracement and extension levels",
-      "When Fibonacci retracement data shows the stock price is higher than price at 0.382, recommand to wait for lower price to enter",
+      "When Fibonacci retracement data shows the stock price is higher than price at 0.382, be more conservative and recommand to wait for lower price to enter",
       "Bollinger Bands and volatility measures"
     ],
     "Quantitative & Algorithmic Concepts": [
