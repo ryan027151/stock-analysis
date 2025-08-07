@@ -6,6 +6,9 @@ import pandas as pd
 import mplfinance as mpf
 from llama_cpp import Llama
 import json
+import os
+from dotenv import load_dotenv
+
 
 # set up model
 MODEL_PATH = "./models/Llama-3.2-1B-Instruct-Q8_0.gguf"
@@ -79,17 +82,33 @@ def get_utc_since(days_back=30):
 
 from polygon import ReferenceClient
 def fetch_stock_news(ticker: str, api_key: str, days_back=30, limit=20):
-    client = ReferenceClient(api_key)
-    since = get_utc_since(days_back=30)
-    resp = client.get_ticker_news(ticker=ticker, params={"limit": limit, "published_utc.gte": since})
-    results = resp.get("results", [])
-    
+    since = get_utc_since(days_back=days_back)
+    url = "https://api.polygon.io/v2/reference/news"
+    load_dotenv()
+    api_key = os.getenv("POLYGON_API_KEY")
+
+    if not api_key:
+        raise ValueError("Polygon API key not found. Make sure it's set in the .env file.")
+
+    params = {
+        "ticker": ticker,
+        "published_utc.gte": since,
+        "order": "desc",
+        "sort": "published_utc",
+        "limit": limit,
+        "apiKey": api_key
+    }
+
+    resp = requests.get(url, params=params)
+    resp.raise_for_status()
+    data = resp.json().get("results", [])
+
     news_items = []
-    for item in results:
+    for item in data:
         news_items.append({
             "date": item.get("published_utc", "")[:10],
             "title": item.get("title", ""),
-            "source": item.get("source", {}).get("name", ""),
+            "source": item.get("source", ""),
             "url": item.get("article_url", "")
         })
     return news_items
@@ -120,10 +139,10 @@ def build_ai_prompt(ticker: str, df: pd.DataFrame, question: str) -> str:
     f"- {item['date']} ({item['source']}): {item['title']}" for item in news
     )
     prompt = (
-        "You are a smart financial stock assistant AI. You are given the latest technical indicators and informations about the stock below and some background knowledge to train on for stock analysis:\n\n"
+        "You are a smart financial stock assistant AI. You are given the latest technical indicators and recent news and informations about this stock and background knowledge to train on for stock analysis:\n\n"
         f"{summary, stock_knowledge, news_section}"
         f"User question: {question}\n"
-        "Provide a concise, data-driven analysis and recommendation.\n"
+        "Using most direct and short but thorough way to explain, provide a concise, data-driven analysis and recommendation.\n"
     )
     return prompt
 
