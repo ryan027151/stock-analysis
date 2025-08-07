@@ -131,7 +131,7 @@ def build_ai_prompt(ticker: str, df: pd.DataFrame, question: str) -> str:
         f"OBV: {int(latest['OBV'])}\n\n"
     )
      #fetching news
-    api_key = "api"
+    api_key = os.getenv("POLYGON_API_KEY")
     news = fetch_stock_news(f"{ticker}", api_key=api_key, days_back=30, limit=15)
 
     # Format into a prompt section
@@ -142,7 +142,7 @@ def build_ai_prompt(ticker: str, df: pd.DataFrame, question: str) -> str:
         "You are a smart financial stock assistant AI. You are given the latest technical indicators and recent news and informations about this stock and background knowledge to train on for stock analysis:\n\n"
         f"{summary, stock_knowledge, news_section}"
         f"User question: {question}\n"
-        "Using most direct and short but thorough way to explain, provide a concise, data-driven analysis and recommendation.\n"
+        "Using most direct and short but thorough way to explain, provide a concise, data-driven analysis and recommendation using the indicators' data and public sentiments of the market from the news.\n"
     )
     return prompt
 
